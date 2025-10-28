@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}Video Statistics - VidStream{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="stats-page">
+        <div class="stats-header">
+            <h1><i class="fas fa-chart-bar"></i> Video Statistics</h1>
+            <a href="{{ url_for('video', video_id=stats.video_id) }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Video
+            </a>
+        </div>
+
+        <div class="stats-card">
+            <h2>{{ stats.title }}</h2>
+            <p class="stats-subtitle">Uploaded by <a href="{{ url_for('user_profile', username=stats.uploaded_by) }}">{{ stats.uploaded_by }}</a></p>
+            <p class="stats-date"><i class="far fa-calendar"></i> {{ stats.created_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-value">{{ stats.views }}</div>
+                    <div class="metric-label">Views</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-value">{{ stats.total_comments }}</div>
+                    <div class="metric-label">Comments</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">
+                    <i class="fas fa-reply"></i>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-value">{{ stats.total_replies }}</div>
+                    <div class="metric-label">Replies</div>
+                </div>
+            </div>
+
+            <div class="metric-card highlight">
+                <div class="metric-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="metric-content">
+                    <div class="metric-value">{{ stats.total_comments + stats.total_replies }}</div>
+                    <div class="metric-label">Total Engagement</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="engagement-info">
+            <h3><i class="fas fa-info-circle"></i> Engagement Details</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Comments per View:</strong>
+                    {% if stats.views > 0 %}
+                        {{ "%.2f"|format((stats.total_comments / stats.views) * 100) }}%
+                    {% else %}
+                        0%
+                    {% endif %}
+                </div>
+                <div class="info-item">
+                    <strong>Replies per Comment:</strong>
+                    {% if stats.total_comments > 0 %}
+                        {{ "%.2f"|format(stats.total_replies / stats.total_comments) }}
+                    {% else %}
+                        0
+                    {% endif %}
+                </div>
+                <div class="info-item">
+                    <strong>Total Interactions:</strong>
+                    {{ stats.views + stats.total_comments + stats.total_replies }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.stats-page {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.stats-card {
+    background-color: var(--card-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.stats-card h2 {
+    margin-bottom: 0.5rem;
+}
+
+.stats-subtitle {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.stats-subtitle a {
+    color: var(--secondary-color);
+    text-decoration: none;
+}
+
+.stats-subtitle a:hover {
+    text-decoration: underline;
+}
+
+.stats-date {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.metric-card {
+    background-color: var(--card-color);
+    border-radius: 12px;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.metric-card.highlight {
+    background: linear-gradient(135deg, var(--secondary-color), #0856c4);
+}
+
+.metric-icon {
+    font-size: 3rem;
+    color: var(--secondary-color);
+}
+
+.metric-card.highlight .metric-icon {
+    color: gold;
+}
+
+.metric-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.metric-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.metric-card.highlight .metric-label {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.engagement-info {
+    background-color: var(--card-color);
+    border-radius: 12px;
+    padding: 2rem;
+}
+
+.engagement-info h3 {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.info-item {
+    padding: 1rem;
+    background-color: var(--surface-color);
+    border-radius: 8px;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.info-item strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .stats-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
+{% endblock %}

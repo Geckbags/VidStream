@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VidStream{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('index') }}" class="logo">
+                <i class="fas fa-play-circle"></i> VidStream
+            </a>
+            <div class="nav-links">
+                <a href="{{ url_for('trending') }}" class="nav-link">
+                    <i class="fas fa-fire"></i> Trending
+                </a>
+                <a href="{{ url_for('leaderboard') }}" class="nav-link">
+                    <i class="fas fa-trophy"></i> Leaderboard
+                </a>
+                {% if session.get('user_id') %}
+                    <a href="{{ url_for('upload') }}" class="nav-link">
+                        <i class="fas fa-upload"></i> Upload
+                    </a>
+                    <a href="{{ url_for('user_profile', username=session.get('username')) }}" class="nav-link">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                    {% if session.get('is_admin') %}
+                        <a href="{{ url_for('admin') }}" class="nav-link admin-link">
+                            <i class="fas fa-shield-alt"></i> Admin
+                        </a>
+                        <a href="{{ url_for('activity_log') }}" class="nav-link admin-link">
+                            <i class="fas fa-history"></i> Logs
+                        </a>
+                    {% endif %}
+                    <span class="nav-link user-info">
+                        <i class="fas fa-user-circle"></i> {{ session.get('username') }}
+                    </span>
+                    <a href="{{ url_for('logout') }}" class="nav-link btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="nav-link">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <a href="{{ url_for('register') }}" class="nav-link btn-register">
+                        <i class="fas fa-user-plus"></i> Register
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <span>{{ message }}</span>
+                            <button onclick="this.parentElement.remove()" class="close-btn">&times;</button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 VidStream. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Auto-hide flash messages after 5 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

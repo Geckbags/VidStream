@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Video - VidStream{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="upload-container">
+        <div class="upload-card">
+            <div class="upload-header">
+                <i class="fas fa-upload"></i>
+                <h2>Upload New Video</h2>
+            </div>
+            <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data" class="upload-form">
+                <div class="form-group">
+                    <label for="title">
+                        <i class="fas fa-heading"></i> Video Title
+                    </label>
+                    <input type="text" id="title" name="title" required class="form-control" placeholder="Enter video title">
+                </div>
+                <div class="form-group">
+                    <label for="description">
+                        <i class="fas fa-align-left"></i> Description
+                    </label>
+                    <textarea id="description" name="description" class="form-control" rows="4" placeholder="Enter video description (optional)"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="thumbnail">
+                        <i class="fas fa-image"></i> Thumbnail Image
+                    </label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="thumbnail" name="thumbnail" accept="image/*" required class="file-input">
+                        <label for="thumbnail" class="file-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span id="file-name">Choose an image file...</span>
+                        </label>
+                    </div>
+                    <div id="preview-container" class="preview-container" style="display: none;">
+                        <img id="preview-image" src="" alt="Preview">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-upload"></i> Upload Video
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // File input preview
+    const fileInput = document.getElementById('thumbnail');
+    const fileName = document.getElementById('file-name');
+    const previewContainer = document.getElementById('preview-container');
+    const previewImage = document.getElementById('preview-image');
+
+    fileInput.addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+            fileName.textContent = this.files[0].name;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImage.src = e.target.result;
+                previewContainer.style.display = 'block';
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+</script>
+{% endblock %}

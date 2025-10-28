@@ -1,0 +1,131 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                    VIDSTREAM - QUICK START                    ║
+╚═══════════════════════════════════════════════════════════════╝
+
+🚀 FASTEST WAY TO GET STARTED
+═══════════════════════════════════════════════════════════════
+
+1. Run the setup script:
+   ./setup.sh
+
+2. Update database password in app.py (line ~16):
+   DB_CONFIG = {
+       'password': 'your_mysql_password'
+   }
+
+3. Start the application:
+   python3 app.py
+
+4. Open your browser:
+   http://localhost:5000
+
+5. Login as admin:
+   Username: admin
+   Password: admin123
+
+
+📋 MANUAL SETUP (if setup.sh doesn't work)
+═══════════════════════════════════════════════════════════════
+
+Step 1: Install dependencies
+  pip3 install -r requirements.txt
+
+Step 2: Create database
+  mysql -u root -p
+  CREATE DATABASE youtube_app;
+  EXIT;
+
+Step 3: Import schema
+  mysql -u root -p youtube_app < schema.sql
+
+Step 4: Create upload directory
+  mkdir -p static/uploads
+
+Step 5: Update app.py with your MySQL password
+
+Step 6: Run the application
+  python3 app.py
+
+
+🎯 FEATURES
+═══════════════════════════════════════════════════════════════
+
+✅ User registration and authentication
+✅ Video upload (thumbnails)
+✅ Comment on videos
+✅ Reply to comments with @ mentions
+✅ Admin dashboard
+✅ Delete videos and comments (admin only)
+✅ Modern dark theme UI
+✅ Responsive design
+✅ Secure password hashing
+
+
+🔐 DEFAULT ADMIN ACCOUNT
+═══════════════════════════════════════════════════════════════
+
+Username: admin
+Password: admin123
+
+⚠️  IMPORTANT: Change this password after first login!
+
+
+📝 TESTING CHECKLIST
+═══════════════════════════════════════════════════════════════
+
+□ Register a new user account
+□ Login with the new account
+□ Upload a video (thumbnail image)
+□ View videos on homepage
+□ Click on a video to see details
+□ Add a comment
+□ Reply to your comment with @username
+□ Login as admin (admin/admin123)
+□ Access admin dashboard
+□ Delete a comment
+□ Delete a video
+
+
+🐛 TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════
+
+Problem: Database connection error
+Solution: Check MySQL is running and credentials in app.py
+
+Problem: Import error
+Solution: Install dependencies with pip3 install -r requirements.txt
+
+Problem: Upload not working
+Solution: Ensure static/uploads directory exists and has write permissions
+
+Problem: Port 5000 in use
+Solution: Change port in app.py or kill process: lsof -ti:5000 | xargs kill
+
+
+📚 DOCUMENTATION
+═══════════════════════════════════════════════════════════════
+
+For complete documentation, see README.md
+
+
+🎨 CUSTOMIZATION
+═══════════════════════════════════════════════════════════════
+
+Colors: Edit static/style.css (CSS variables at the top)
+Site Name: Change "VidStream" in templates/base.html
+Features: Add to app.py and corresponding templates
+
+
+💡 NEXT STEPS
+═══════════════════════════════════════════════════════════════
+
+1. Change admin password
+2. Test all features
+3. Customize the design to your liking
+4. Add more features (search, categories, likes, etc.)
+5. Deploy to production server
+
+
+═══════════════════════════════════════════════════════════════
+                    Happy coding! 🎉
+═══════════════════════════════════════════════════════════════

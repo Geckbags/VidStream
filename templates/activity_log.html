@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Activity Log - VidStream{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="admin-header">
+        <h1><i class="fas fa-history"></i> Activity Log</h1>
+        <p style="color: var(--text-secondary);">System-wide activity tracked by triggers</p>
+    </div>
+
+    {% if logs %}
+        <div class="log-container">
+            <table class="log-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Action</th>
+                        <th>Table</th>
+                        <th>Record ID</th>
+                        <th>User ID</th>
+                        <th>Details</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                        <tr class="log-{{ log.action_type.lower() }}">
+                            <td>{{ log.log_id }}</td>
+                            <td>
+                                <span class="action-badge action-{{ log.action_type.lower() }}">
+                                    {% if log.action_type == 'INSERT' %}
+                                        <i class="fas fa-plus"></i>
+                                    {% elif log.action_type == 'DELETE' %}
+                                        <i class="fas fa-trash"></i>
+                                    {% elif log.action_type == 'UPDATE' %}
+                                        <i class="fas fa-edit"></i>
+                                    {% endif %}
+                                    {{ log.action_type }}
+                                </span>
+                            </td>
+                            <td><code>{{ log.table_name }}</code></td>
+                            <td>{{ log.record_id }}</td>
+                            <td>{{ log.user_id }}</td>
+                            <td class="log-details">{{ log.details }}</td>
+                            <td class="log-time">{{ log.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-history"></i>
+            <p>No activity recorded yet</p>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.log-container {
+    background-color: var(--card-color);
+    border-radius: 12px;
+    padding: 2rem;
+    overflow-x: auto;
+}
+
+.log-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.log-table thead {
+    background-color: var(--surface-color);
+}
+
+.log-table th,
+.log-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.log-table th {
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+
+.log-table tr:hover {
+    background-color: var(--surface-color);
+}
+
+.action-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.action-insert {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.action-delete {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.action-update {
+    background-color: var(--warning-color);
+    color: #000;
+}
+
+code {
+    background-color: var(--surface-color);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    color: var(--info-color);
+}
+
+.log-details {
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.log-time {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+    .log-table {
+        font-size: 0.75rem;
+    }
+    
+    .log-table th,
+    .log-table td {
+        padding: 0.5rem;
+    }
+}
+</style>
+{% endblock %}

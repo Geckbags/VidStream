@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Leaderboard - VidStream{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1><i class="fas fa-trophy"></i> User Leaderboard</h1>
+        <p style="color: var(--text-secondary);">Top contributors ranked by engagement score</p>
+    </div>
+
+    {% if users %}
+        <div class="leaderboard-container">
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>User</th>
+                        <th>Videos</th>
+                        <th>Total Views</th>
+                        <th>Comments</th>
+                        <th>Replies</th>
+                        <th>Engagement Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr class="{% if loop.index <= 3 %}top-rank rank-{{ loop.index }}{% endif %}">
+                            <td class="rank-cell">
+                                {% if loop.index == 1 %}
+                                    <i class="fas fa-crown" style="color: gold;"></i>
+                                {% elif loop.index == 2 %}
+                                    <i class="fas fa-medal" style="color: silver;"></i>
+                                {% elif loop.index == 3 %}
+                                    <i class="fas fa-medal" style="color: #cd7f32;"></i>
+                                {% else %}
+                                    {{ loop.index }}
+                                {% endif %}
+                            </td>
+                            <td class="user-cell">
+                                <a href="{{ url_for('user_profile', username=user.username) }}">
+                                    <i class="fas fa-user-circle"></i> {{ user.username }}
+                                </a>
+                            </td>
+                            <td>{{ user.total_videos }}</td>
+                            <td>{{ user.total_views }}</td>
+                            <td>{{ user.total_comments }}</td>
+                            <td>{{ user.total_replies }}</td>
+                            <td class="score-cell">
+                                <span class="score-badge">{{ user.engagement_score }}</span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-users-slash"></i>
+            <h2>No users yet</h2>
+            <p>Be the first to join and climb the leaderboard!</p>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.leaderboard-container {
+    background-color: var(--card-color);
+    border-radius: 12px;
+    padding: 2rem;
+    overflow-x: auto;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard-table thead {
+    background-color: var(--surface-color);
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.leaderboard-table th {
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.leaderboard-table tr:hover {
+    background-color: var(--surface-color);
+}
+
+.rank-cell {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    width: 80px;
+}
+
+.user-cell a {
+    color: var(--text-primary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-cell a:hover {
+    color: var(--secondary-color);
+}
+
+.score-cell {
+    text-align: center;
+}
+
+.score-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--secondary-color), #0856c4);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.top-rank {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent);
+}
+
+.rank-1 .score-badge {
+    background: linear-gradient(135deg, gold, #ffa500);
+}
+
+.rank-2 .score-badge {
+    background: linear-gradient(135deg, silver, #808080);
+}
+
+.rank-3 .score-badge {
+    background: linear-gradient(135deg, #cd7f32, #8b4513);
+}
+
+@media (max-width: 768px) {
+    .leaderboard-table {
+        font-size: 0.85rem;
+    }
+    
+    .leaderboard-table th,
+    .leaderboard-table td {
+        padding: 0.75rem 0.5rem;
+    }
+}
+</style>
+{% endblock %}
