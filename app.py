@@ -1,8 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-import mysql.connector
-from mysql.connector import Error
+import pymysql
 import os
 from datetime import datetime
 from functools import wraps
@@ -25,9 +24,15 @@ DB_CONFIG = {
 def get_db_connection():
     """Create and return a database connection"""
     try:
-        connection = mysql.connector.connect(**DB_CONFIG)
+        connection = pymysql.connect(
+            host=DB_CONFIG['host'],
+            user=DB_CONFIG['user'],
+            password=DB_CONFIG['password'],
+            database=DB_CONFIG['database'],
+            cursorclass=pymysql.cursors.DictCursor
+        )
         return connection
-    except Error as e:
+    except pymysql.Error as e:
         print(f"Error connecting to MySQL: {e}")
         return None
 
@@ -66,7 +71,7 @@ def index():
         flash('Database connection error', 'danger')
         return render_template('index.html', videos=[])
     
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     cursor.execute("""
         SELECT v.*, u.username 
         FROM videos v 
@@ -147,7 +152,7 @@ def login():
             flash('Database connection error', 'danger')
             return redirect(url_for('login'))
         
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
         user = cursor.fetchone()
         cursor.close()
@@ -238,7 +243,7 @@ def video(video_id):
         flash('Database connection error', 'danger')
         return redirect(url_for('index'))
     
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     
     # Get video details
     cursor.execute("""
@@ -333,7 +338,7 @@ def add_reply(comment_id):
         flash('Database connection error', 'danger')
         return redirect(url_for('video', video_id=video_id))
     
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     
     if mention_match:
         mentioned_username = mention_match.group(1)
@@ -362,7 +367,7 @@ def admin():
         flash('Database connection error', 'danger')
         return render_template('admin.html', videos=[], comments=[])
     
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     
     # Get all videos
     cursor.execute("""
@@ -397,7 +402,7 @@ def delete_video(video_id):
         flash('Database connection error', 'danger')
         return redirect(url_for('admin'))
     
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     
     # Get thumbnail path before deletion
     cursor.execute("SELECT thumbnail_path FROM videos WHERE video_id = %s", (video_id,))
@@ -448,7 +453,7 @@ def video_stats(video_id):
         flash('Database connection error', 'danger')
         return redirect(url_for('index'))
     
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     
     # Call stored procedure
     cursor.callproc('get_video_stats', [video_id])
@@ -475,7 +480,7 @@ def user_profile(username):
         flash('Database connection error', 'danger')
         return redirect(url_for('index'))
     
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     
     # Call stored procedure
     cursor.callproc('get_user_activity', [username])
@@ -515,7 +520,7 @@ def trending():
         flash('Database connection error', 'danger')
         return render_template('trending.html', videos=[])
     
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     
     # Get trending videos - direct query with all needed fields
     cursor.execute("""
@@ -550,7 +555,7 @@ def leaderboard():
         flash('Database connection error', 'danger')
         return render_template('leaderboard.html', users=[])
     
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     cursor.execute("SELECT * FROM user_leaderboard LIMIT 50")
     users = cursor.fetchall()
     cursor.close()
@@ -567,7 +572,7 @@ def activity_log():
         flash('Database connection error', 'danger')
         return render_template('activity_log.html', logs=[])
     
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     cursor.execute("SELECT * FROM activity_log ORDER BY created_at DESC LIMIT 100")
     logs = cursor.fetchall()
     cursor.close()
